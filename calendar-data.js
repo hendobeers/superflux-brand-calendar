@@ -6,7 +6,7 @@ window.SFX_CALENDAR = {
     { "id": "2026-11", "label": "November 2026" }
   ],
   categories: [
-    { "id": "core", "label": "Core release" },
+    { "id": "core", "label": "Standing Order" },
     { "id": "exp", "label": "Experimental" },
     { "id": "fruit", "label": "Heavy Fruit" },
     { "id": "creamery", "label": "The Creamery" },

@@ -69,7 +69,7 @@ The generated file has this shape:
 ```js
 window.SFX_CALENDAR = {
   months: [ { id: "2026-09", label: "September 2026" }, … ],   // months to show, in order
-  categories: [ { id: "core", label: "Core release" }, … ],    // legend, in order
+  categories: [ { id: "core", label: "Standing Order" }, … ],    // legend, in order
   items: [
     // One-day item (release or event)
     { name: "Evergreen", cat: "core", date: "2026-09-15" },
@@ -145,7 +145,7 @@ window working, not a bug.
 
 | `cat` | Legend label | Sidebar section | Colour |
 |---|---|---|---|
-| `core` | Core release | Releases this month | `#2D5BE3` |
+| `core` | Standing Order | Releases this month | `#2D5BE3` |
 | `exp` | Experimental | Releases this month | `#F26B1F` |
 | `fruit` | Heavy Fruit | Releases (date) / On tap (range) | `#E8378A` |
 | `creamery` | The Creamery | Releases this month | `#F2C230` |

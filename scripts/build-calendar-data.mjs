@@ -10,7 +10,7 @@ const OUT = process.env.CALENDAR_DATA_OUT || "calendar-data.js";
 const TZ = "America/Vancouver";
 
 const CATEGORIES = [
-  ["core", "Core release"], ["exp", "Experimental"], ["fruit", "Heavy Fruit"],
+  ["core", "Standing Order"], ["exp", "Experimental"], ["fruit", "Heavy Fruit"],
   ["creamery", "The Creamery"], ["collab", "Collab"], ["release", "New release"],
   ["lto", "Wholesale $1 LTO"], ["event", "Event"], ["burger", "Food"], ["food", "Food"],
 ];
