@@ -42,3 +42,5 @@ window.SFX_CALENDAR = {
     { "name": "Burger Day", "cat": "burger", "weekdays": [0,6] }
   ]
 };
+
+// stale marker — the next sync should remove this line
