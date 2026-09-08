@@ -5,7 +5,8 @@ A single static page that renders the brand calendar from `calendar-data.js`. De
 ## Files
 
 - `index.html` — the page. No build step, no dependencies. Do not edit for content changes.
-- `calendar-data.js` — the only file the weekly task touches.
+- `calendar-data.js` — the only file the weekly job rewrites. Generated; do not edit by hand.
+- `scripts/build-calendar-data.mjs` — builds `calendar-data.js` from the events sheet.
 - `assets/` — Superflux badge. The Founders Grotesk `.woff2` files live here locally but are
   **git-ignored**: they are licensed and must not be redistributed in a public repo. They are
   served from a Vercel Blob store instead — see "Fonts" below.
@@ -38,7 +39,29 @@ have them, and the page will fall back to Montserrat / system sans until they ar
 
 ## Weekly task contract
 
-The task reads the Drive form responses and writes `calendar-data.js` in this shape, then commits and pushes to `main`:
+`calendar-data.js` is **generated** — do not edit it by hand. `scripts/build-calendar-data.mjs`
+reads the published-to-web CSV of the events form-responses sheet and writes the file. The
+`sync-calendar-data` workflow runs it Mondays at 09:30 UTC (~02:30 Vancouver), on manual dispatch,
+and whenever the script itself changes; it commits `calendar-data.js` only when the contents differ,
+and the push redeploys the site.
+
+The sheet URL lives in the repository variable `CALENDAR_SHEET_CSV_URL` (Settings -> Secrets and
+variables -> Actions -> Variables). No secrets are involved; the workflow uses `GITHUB_TOKEN` only.
+
+To run it by hand:
+
+```bash
+gh workflow run sync-calendar-data.yml          # via Actions
+CALENDAR_SHEET_CSV_URL="<url>" node scripts/build-calendar-data.mjs   # locally
+```
+
+Which sheet column maps to which category is decided by `categorise()` in the script — that is the
+one place to edit when a new event type appears or a release is filed under the wrong colour. The
+script also collapses duplicate submissions, clamps everything to the rolling three-month window,
+and turns "every Saturday and Sunday"-style rules into `recurring` entries (nth-weekday rules such
+as "every first Monday" are not supported and are skipped with a warning).
+
+The generated file has this shape:
 
 ```js
 window.SFX_CALENDAR = {
