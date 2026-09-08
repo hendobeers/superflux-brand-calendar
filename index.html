@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Superflux Brand Calendar</title>
+<link rel="icon" href="assets/badge.svg">
+<style>
+  @font-face { font-family: "Founders Grotesk"; src: url("assets/founders-grotesk-web-regular.woff2") format("woff2"); font-weight: 400; font-style: normal; }
+  @font-face { font-family: "Founders Grotesk"; src: url("assets/founders-grotesk-web-medium.woff2") format("woff2"); font-weight: 500; font-style: normal; }
+  @font-face { font-family: "Founders Grotesk"; src: url("assets/founders-grotesk-web-light-italic.woff2") format("woff2"); font-weight: 300; font-style: italic; }
+  html, body { margin: 0; background: #fff; color: #000; }
+  body { font-family: "Founders Grotesk", Montserrat, sans-serif; font-size: 15px; line-height: 1.3; }
+  a { color: #000; } a:hover { color: #666; }
+  button { font: inherit; border-radius: 0; cursor: pointer; }
+  .page { min-height: 100vh; padding: 28px 36px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; border-bottom: 2px solid #000; padding-bottom: 16px; }
+  .head-l { display: flex; align-items: flex-end; gap: 22px; }
+  .head-l img { width: 60px; height: 60px; display: block; }
+  .kicker { font-size: 0.68em; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: #666; }
+  .title { font-size: 2.6em; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1; margin: 6px 0 0; }
+  .nav { display: flex; align-items: center; gap: 6px; }
+  .nav button { border: 1px solid #000; background: #fff; color: #000; height: 36px; padding: 0 14px; font-size: 0.75em; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; }
+  .nav button.arrow { width: 36px; padding: 0; display: grid; place-items: center; font-size: 1em; letter-spacing: 0; }
+  .nav button:hover, .nav button.on { background: #000; color: #fff; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+  .legend div { display: flex; align-items: center; gap: 8px; font-size: 0.8em; }
+  .sw { width: 14px; height: 14px; display: block; box-sizing: border-box; }
+  .main { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 36px; align-items: start; }
+  .cal { display: flex; flex-direction: column; min-width: 0; }
+  .g7 { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0 8px; }
+  .dow { padding-bottom: 8px; }
+  .dow div { font-size: 0.68em; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: #666; }
+  .week { border-top: 1px solid #000; padding: 8px 0 12px; display: flex; flex-direction: column; gap: 6px; }
+  .spans { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-rows: min-content; gap: 3px 8px; }
+  .num { grid-row: 1; font-size: 0.95em; font-weight: 500; padding-bottom: 2px; }
+  .num.out { color: #b8b8b8; }
+  .bar { font-size: 0.8em; font-weight: 500; padding: 4px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .day { min-height: 96px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .chip { font-size: 0.78em; font-weight: 500; padding: 4px 5px; line-height: 1.25; text-wrap: pretty; overflow-wrap: break-word; box-sizing: border-box; }
+  .side { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+  .sec { display: flex; flex-direction: column; }
+  .sec h2 { margin: 0; border-top: 2px solid #000; padding: 8px 0 10px; font-size: 0.68em; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; }
+  .row { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 0 10px; border-top: 1px solid #b8b8b8; padding: 8px 0; }
+  .row .sw { width: 12px; height: 12px; margin-top: 3px; }
+  .row .n { font-size: 0.9em; text-wrap: pretty; }
+  .row .w { font-size: 0.78em; color: #666; margin-top: 2px; }
+  .foot { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid #b8b8b8; padding-top: 10px; font-size: 0.75em; color: #666; }
+  .foot i { font-weight: 300; }
+  @media (max-width: 760px) { .main { grid-template-columns: minmax(0, 1fr); } .page { padding: 20px 16px 32px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <div class="head-l">
+      <img src="assets/badge.svg" alt="Superflux">
+      <div><div class="kicker">Brand calendar</div><h1 class="title" id="title"></h1></div>
+    </div>
+    <div class="nav" id="nav"></div>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="main">
+    <div class="cal" id="cal"></div>
+    <div class="side" id="side"></div>
+  </div>
+  <div class="foot"><span>Brand calendar · Internal</span><i>superfluxbeer.com</i></div>
+</div>
+<script src="calendar-data.js"></script>
+<script>
+(function () {
+  const D = window.SFX_CALENDAR;
+  const COLORS = { core: '#2D5BE3', exp: '#F26B1F', fruit: '#E8378A', creamery: '#F2C230', collab: '#2FA86B', release: '#7A4BD9', lto: '#F8BDD7', event: '#FFFFFF', burger: '#000000', food: '#000000' };
+  const fg = hex => { const h = hex.slice(1); const [r, g, b] = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#000' : '#fff'; };
+  const paint = cat => { const bg = COLORS[cat] || '#000'; return `background:${bg};color:${fg(bg)};border:1px solid ${bg.toUpperCase() === '#FFFFFF' ? '#000' : bg}`; };
+  const d = iso => { const [y, m, dd] = iso.split('-').map(Number); return new Date(y, m - 1, dd); };
+  const iso = dt => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const isFood = c => c === 'burger' || c === 'food';
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  // Default to the current month if it is in the data, otherwise the first.
+  const now = new Date(); const nowId = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  let idx = Math.max(0, D.months.findIndex(m => m.id === nowId));
+  const fromHash = D.months.findIndex(m => m.id === location.hash.slice(1)); if (fromHash >= 0) idx = fromHash;
+
+  function render() {
+    const month = D.months[idx]; const [Y, M] = month.id.split('-').map(Number);
+    location.hash = month.id;
+    document.getElementById('title').textContent = month.label;
+    document.getElementById('nav').innerHTML =
+      `<button class="arrow" data-i="${idx - 1}" ${idx === 0 ? 'disabled' : ''}>←</button>` +
+      D.months.map((m, i) => `<button class="${i === idx ? 'on' : ''}" data-i="${i}">${esc(m.label.slice(0, 3))}</button>`).join('') +
+      `<button class="arrow" data-i="${idx + 1}" ${idx === D.months.length - 1 ? 'disabled' : ''}>→</button>`;
+    document.getElementById('legend').innerHTML = D.categories.map(c => `<div><span class="sw" style="${paint(c.id)}"></span><span>${esc(c.label)}</span></div>`).join('');
+
+    const first = new Date(Y, M - 1, 1), last = new Date(Y, M, 0);
+    const gs = new Date(first); gs.setDate(1 - first.getDay());
+    const ge = new Date(last); ge.setDate(last.getDate() + 6 - last.getDay());
+    const points = D.items.filter(i => i.date), spans = D.items.filter(i => i.start);
+    let html = `<div class="g7 dow">${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(x => `<div>${x}</div>`).join('')}</div>`;
+    for (let ws = new Date(gs); ws <= ge; ws.setDate(ws.getDate() + 7)) {
+      const we = new Date(ws); we.setDate(ws.getDate() + 6); const wsI = iso(ws), weI = iso(we);
+      let nums = '', bars = '', cells = '';
+      for (let k = 0; k < 7; k++) {
+        const dt = new Date(ws); dt.setDate(ws.getDate() + k); const dI = iso(dt), inM = dt.getMonth() === M - 1;
+        nums += `<div class="num ${inM ? '' : 'out'}" style="grid-column:${k + 1}">${dt.getDate()}</div>`;
+        const items = points.filter(p => p.date === dI).map(p => ({ name: p.name, cat: p.cat }));
+        if (inM) D.recurring.forEach(r => { if (r.weekdays.includes(k)) items.push({ name: r.name, cat: r.cat }); });
+        cells += `<div class="day">${items.map(it => `<div class="chip" style="${paint(it.cat)}">${esc(it.name)}</div>`).join('')}</div>`;
+      }
+      spans.filter(s => s.start <= weI && s.end >= wsI).forEach((s, i) => {
+        const a = s.start > wsI ? d(s.start).getDay() : 0, b = s.end < weI ? d(s.end).getDay() : 6;
+        bars += `<div class="bar" style="grid-row:${i + 2};grid-column:${a + 1} / ${b + 2};${paint(s.cat)}">${esc(s.name)}</div>`;
+      });
+      html += `<div class="week"><div class="spans">${nums}${bars}</div><div class="g7">${cells}</div></div>`;
+    }
+    html += '<div style="border-top:1px solid #000"></div>';
+    document.getElementById('cal').innerHTML = html;
+
+    const mS = iso(first), mE = iso(last);
+    const fmt = dt => dt.toLocaleDateString('en-CA', { weekday: 'short', day: 'numeric' });
+    const fmtL = i => d(i).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
+    const pts = points.filter(p => p.date >= mS && p.date <= mE).sort((a, b) => a.date.localeCompare(b.date));
+    const sps = spans.filter(s => s.start <= mE && s.end >= mS);
+    const pt = p => ({ name: p.name, when: fmt(d(p.date)), cat: p.cat });
+    const sp = s => ({ name: s.name, when: `${fmtL(s.start)} – ${fmtL(s.end)}`, cat: s.cat });
+    const sections = [
+      ['Releases this month', pts.filter(p => !isFood(p.cat)).map(pt)],
+      ['On tap', sps.filter(s => s.cat !== 'lto' && !isFood(s.cat)).map(sp)],
+      ['Wholesale', sps.filter(s => s.cat === 'lto').map(sp)],
+      ['Food', [
+        ...D.recurring.filter(r => isFood(r.cat)).map(r => ({ name: r.name, when: 'Every ' + r.weekdays.map(w => DAYS[w]).join(' & '), cat: r.cat })),
+        ...pts.filter(p => isFood(p.cat)).map(pt), ...sps.filter(s => isFood(s.cat)).map(sp)]]
+    ];
+    document.getElementById('side').innerHTML = sections.map(([h, rows]) =>
+      `<div class="sec"><h2>${h}</h2>${rows.map(r => `<div class="row"><span class="sw" style="${paint(r.cat)}"></span><div><div class="n">${esc(r.name)}</div><div class="w">${esc(r.when)}</div></div></div>`).join('') || '<div class="row" style="grid-template-columns:1fr"><div class="w">Nothing scheduled</div></div>'}</div>`).join('');
+  }
+  document.getElementById('nav').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; idx = Number(b.dataset.i); render(); });
+  render();
+})();
+</script>
+</body>
+</html>
