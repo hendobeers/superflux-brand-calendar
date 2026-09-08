@@ -7,6 +7,9 @@ A single static page that renders the brand calendar from `calendar-data.js`. De
 - `index.html` — the page. No build step, no dependencies. Do not edit for content changes.
 - `calendar-data.js` — the only file the weekly job rewrites. Generated; do not edit by hand.
 - `scripts/build-calendar-data.mjs` — builds `calendar-data.js` from the events sheet.
+- `scripts/links.mjs` — owns calendar-name → Brand Reference slug lookup.
+- `scripts/validate-links.mjs` — the gate the workflow runs before committing.
+- `beer-links.json` — the reviewed name → slug map. Edited by a person, never generated.
 - `assets/` — Superflux badge. The Founders Grotesk `.woff2` files live here locally but are
   **git-ignored**: they are licensed and must not be redistributed in a public repo. They are
   served from a Vercel Blob store instead — see "Fonts" below.
@@ -85,6 +88,58 @@ Rules:
 - Use full names — nothing is truncated, chips wrap.
 - Keep `months` covering the current month or the page falls back to the first month listed. Rolling three months (current + 2) is the intended window; older months can be dropped.
 - Every `cat` must be one of the IDs below. Unknown categories render black.
+
+## Linking chips to the Brand Reference
+
+Chips, span bars and sidebar rows link to `superflux-brand-reference.vercel.app/beer/<slug>`
+when — and only when — `beer-links.json` says which slug a calendar item means. Everything
+else renders as a plain, unlinked chip. The link target is the `REF` constant at the top of
+the script in `index.html`.
+
+**Never match names to slugs automatically.** They do not correspond, in either direction.
+`Exp. DIPA #1` looks like `experimental-ipa-81` and is actually `experimental-dipa-1`;
+`Drip Tiramisu Coffee Stout` is `drip-2026` and no algorithm can get there from the name;
+`The Creamery Pumpkin Pie` looks like `heavy-fruit-pumpkin-pie`, which is a different brand
+family with different allergens. Reference records carry allergen data, so a wrong link is a
+safety problem. Auto-matching may propose an entry for review; it may never write one.
+
+### The three buckets
+
+| Bucket | Meaning | Renders |
+|---|---|---|
+| `links` | Verified, and the page is live in `beers.json` | linked |
+| `pending` | Slug verified in the canon, page not published yet | plain chip |
+| `unlinked` | Reviewed, deliberately not linked — with the reason | plain chip |
+
+`pending` exists because the canon runs ahead of the site: a slug can be real in the canon and
+still 404 until the reference's `canon-sync` PR merges. Move an entry from `pending` to `links`
+once its page is live. `unlinked` records that a person looked and said no, so the same
+question isn't reopened every month.
+
+Items in categories `event`, `burger` and `food` never link and need no entry.
+
+### Adding a beer
+
+1. Find the slug in the reference's `beers.json`, or on the beer's own page URL.
+2. Add `"<exact calendar name>": "<slug>"` to `links` if the page is live, `pending` if not.
+3. Bump `generated`. `node scripts/build-calendar-data.mjs && node scripts/validate-links.mjs`.
+
+Names are matched through `canonKey()` in `scripts/links.mjs`, which absorbs harmless drift —
+case, apostrophes, a leading `$1 `, a trailing ` LTO`, a trailing `(… Collab)`. It deliberately
+does **not** strip brand-family words like "The Creamery" or "Heavy Fruit", because doing so is
+exactly what makes different beers look identical.
+
+### What fails the build, and what only warns
+
+Fails: a malformed slug, a name in two buckets, two names normalising to the same key, a slug
+in `calendar-data.js` that the map doesn't sanction, a slug on a non-beer category, or a map
+more than 90 days old. Warns: a calendar item in no bucket — it renders unlinked, because one
+unreviewed new beer must never stall the whole Monday sync.
+
+Two known limits. Most staff sign in with personal addresses and the reference is gated on a
+Google allow-list, so following a link needs an allow-listed account. And the calendar only
+covers a rolling three months, so links disappear with the months that age out — that is the
+window working, not a bug.
 
 ## Categories → sidebar section → colour
 

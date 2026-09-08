@@ -2,6 +2,7 @@
 // Reads the Superflux events form-responses sheet (published-to-web CSV) and writes calendar-data.js.
 // Usage: CALENDAR_SHEET_CSV_URL=<url or local path> node scripts/build-calendar-data.mjs
 import { readFile, writeFile } from "node:fs/promises";
+import { LINKABLE, SLUG_RE, canonKey, loadBeerLinks } from "./links.mjs";
 
 const SRC = process.env.CALENDAR_SHEET_CSV_URL;
 if (!SRC) { console.error("CALENDAR_SHEET_CSV_URL not set"); process.exit(1); }
@@ -118,6 +119,29 @@ for (const r of rows) {
   }
 }
 items.sort((a, b) => (a.date || a.start).localeCompare(b.date || b.start) || a.name.localeCompare(b.name));
+
+// ---------- link items to the Brand Reference ----------
+// A slug is only ever read from the reviewed map. Nothing here derives one from a name:
+// the names and the slugs do not correspond, and a wrong link shows the wrong allergens.
+const beerLinks = await loadBeerLinks(process.env.BEER_LINKS || "beer-links.json");
+if (beerLinks.problems.length) {
+  console.error("beer-links.json is not usable:");
+  for (const p of beerLinks.problems) console.error(`  - ${p}`);
+  process.exit(1);
+}
+const linkReport = { linked: 0, pending: [], unreviewed: [] };
+function attachSlug(item) {
+  if (!LINKABLE.has(item.cat)) return;            // events and food are not beers
+  const hit = beerLinks.byKey.get(canonKey(item.name));
+  if (!hit) { linkReport.unreviewed.push(item.name); return; }
+  if (hit.bucket === "pending") { linkReport.pending.push(item.name); return; }
+  if (hit.slug && SLUG_RE.test(hit.slug)) { item.slug = hit.slug; linkReport.linked++; }
+}
+for (const it of [...items, ...recurring]) attachSlug(it);
+const usedKeys = new Set([...items, ...recurring].map((i) => canonKey(i.name)));
+const unused = [...beerLinks.byKey.values()].filter((v) => !usedKeys.has(canonKey(v.name)));
+for (const n of linkReport.unreviewed) console.warn(`No entry in beer-links.json: "${n}" — renders unlinked`);
+
 const used = new Set([...items, ...recurring].map((i) => i.cat));
 const categories = CATEGORIES.filter(([id]) => used.has(id)).map(([id, label]) => ({ id, label }));
 
@@ -140,3 +164,4 @@ ${recurring.map((r) => "    " + j(r)).join(",\n")}
 `;
 await writeFile(OUT, out);
 console.log(`Wrote ${OUT}: ${months[0].id}..${months[2].id}, ${items.length} items, ${recurring.length} recurring`);
+console.log(`Links: ${linkReport.linked} linked, ${linkReport.pending.length} pending, ${linkReport.unreviewed.length} unreviewed${unused.length ? `, ${unused.length} map entries unused this window` : ""}`);

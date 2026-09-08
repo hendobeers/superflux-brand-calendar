@@ -39,6 +39,9 @@
   .bar { font-size: 0.8em; font-weight: 500; padding: 4px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .day { min-height: 96px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   .chip { font-size: 0.78em; font-weight: 500; padding: 4px 5px; line-height: 1.25; text-wrap: pretty; overflow-wrap: break-word; box-sizing: border-box; }
+  a.chip, a.bar, a.n { display: block; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a.chip:hover, a.bar:hover, a.n:hover { text-decoration-thickness: 2px; }
+  a.chip:focus-visible, a.bar:focus-visible, a.n:focus-visible { outline: 2px solid currentColor; outline-offset: 1px; }
   .side { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
   .sec { display: flex; flex-direction: column; }
   .sec h2 { margin: 0; border-top: 2px solid #000; padding: 8px 0 10px; font-size: 0.68em; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; }
@@ -73,6 +76,11 @@
   const D = window.SFX_CALENDAR;
   const COLORS = { core: '#2D5BE3', exp: '#F26B1F', fruit: '#E8378A', creamery: '#F2C230', collab: '#2FA86B', release: '#7A4BD9', lto: '#F8BDD7', event: '#FFFFFF', burger: '#000000', food: '#000000' };
   const fg = hex => { const h = hex.slice(1); const [r, g, b] = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#000' : '#fff'; };
+  const REF = 'https://superflux-brand-reference.vercel.app/beer/';
+  const SLUG_OK = /^[a-z0-9][a-z0-9-]*$/;
+  const box = (cls, style, slug, inner) => SLUG_OK.test(slug || '')
+    ? `<a class="${cls}" style="${style}" href="${REF}${slug}" target="_blank" rel="noopener">${inner}</a>`
+    : `<div class="${cls}" style="${style}">${inner}</div>`;
   const paint = cat => { const bg = COLORS[cat] || '#000'; return `background:${bg};color:${fg(bg)};border:1px solid ${bg.toUpperCase() === '#FFFFFF' ? '#000' : bg}`; };
   const d = iso => { const [y, m, dd] = iso.split('-').map(Number); return new Date(y, m - 1, dd); };
   const iso = dt => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
@@ -106,13 +114,13 @@
       for (let k = 0; k < 7; k++) {
         const dt = new Date(ws); dt.setDate(ws.getDate() + k); const dI = iso(dt), inM = dt.getMonth() === M - 1;
         nums += `<div class="num ${inM ? '' : 'out'}" style="grid-column:${k + 1}">${dt.getDate()}</div>`;
-        const items = points.filter(p => p.date === dI).map(p => ({ name: p.name, cat: p.cat }));
-        if (inM) D.recurring.forEach(r => { if (r.weekdays.includes(k)) items.push({ name: r.name, cat: r.cat }); });
-        cells += `<div class="day">${items.map(it => `<div class="chip" style="${paint(it.cat)}">${esc(it.name)}</div>`).join('')}</div>`;
+        const items = points.filter(p => p.date === dI).map(p => ({ name: p.name, cat: p.cat, slug: p.slug }));
+        if (inM) D.recurring.forEach(r => { if (r.weekdays.includes(k)) items.push({ name: r.name, cat: r.cat, slug: r.slug }); });
+        cells += `<div class="day">${items.map(it => box('chip', paint(it.cat), it.slug, esc(it.name))).join('')}</div>`;
       }
       spans.filter(s => s.start <= weI && s.end >= wsI).forEach((s, i) => {
         const a = s.start > wsI ? d(s.start).getDay() : 0, b = s.end < weI ? d(s.end).getDay() : 6;
-        bars += `<div class="bar" style="grid-row:${i + 2};grid-column:${a + 1} / ${b + 2};${paint(s.cat)}">${esc(s.name)}</div>`;
+        bars += box('bar', `grid-row:${i + 2};grid-column:${a + 1} / ${b + 2};${paint(s.cat)}`, s.slug, esc(s.name));
       });
       html += `<div class="week"><div class="spans">${nums}${bars}</div><div class="g7">${cells}</div></div>`;
     }
@@ -124,8 +132,8 @@
     const fmtL = i => d(i).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
     const pts = points.filter(p => p.date >= mS && p.date <= mE).sort((a, b) => a.date.localeCompare(b.date));
     const sps = spans.filter(s => s.start <= mE && s.end >= mS);
-    const pt = p => ({ name: p.name, when: fmt(d(p.date)), cat: p.cat });
-    const sp = s => ({ name: s.name, when: `${fmtL(s.start)} – ${fmtL(s.end)}`, cat: s.cat });
+    const pt = p => ({ name: p.name, when: fmt(d(p.date)), cat: p.cat, slug: p.slug });
+    const sp = s => ({ name: s.name, when: `${fmtL(s.start)} – ${fmtL(s.end)}`, cat: s.cat, slug: s.slug });
     const sections = [
       ['Releases this month', pts.filter(p => !isFood(p.cat)).map(pt)],
       ['On tap', sps.filter(s => s.cat !== 'lto' && !isFood(s.cat)).map(sp)],
@@ -135,7 +143,7 @@
         ...pts.filter(p => isFood(p.cat)).map(pt), ...sps.filter(s => isFood(s.cat)).map(sp)]]
     ];
     document.getElementById('side').innerHTML = sections.map(([h, rows]) =>
-      `<div class="sec"><h2>${h}</h2>${rows.map(r => `<div class="row"><span class="sw" style="${paint(r.cat)}"></span><div><div class="n">${esc(r.name)}</div><div class="w">${esc(r.when)}</div></div></div>`).join('') || '<div class="row" style="grid-template-columns:1fr"><div class="w">Nothing scheduled</div></div>'}</div>`).join('');
+      `<div class="sec"><h2>${h}</h2>${rows.map(r => `<div class="row"><span class="sw" style="${paint(r.cat)}"></span><div>${box('n', '', r.slug, esc(r.name))}<div class="w">${esc(r.when)}</div></div></div>`).join('') || '<div class="row" style="grid-template-columns:1fr"><div class="w">Nothing scheduled</div></div>'}</div>`).join('');
   }
   document.getElementById('nav').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; idx = Number(b.dataset.i); render(); });
   render();
