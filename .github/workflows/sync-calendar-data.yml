@@ -1,0 +1,25 @@
+name: Sync calendar data
+on:
+  schedule:
+    - cron: "30 9 * * 1"   # Mondays 09:30 UTC, after the Cowork task runs
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch calendar-data.js from Drive
+        run: |
+          curl -fsSL "https://drive.google.com/uc?export=download&id=${{ vars.CALENDAR_DATA_FILE_ID }}" -o /tmp/calendar-data.js
+          node -e "global.window={};require('/tmp/calendar-data.js');const d=window.SFX_CALENDAR;if(!d||!Array.isArray(d.months)||!d.months.length||!Array.isArray(d.items))process.exit(1)"
+          cp /tmp/calendar-data.js calendar-data.js
+      - name: Commit if changed
+        run: |
+          git config user.name "superflux-calendar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add calendar-data.js
+          git diff --cached --quiet && exit 0
+          git commit -m "Update calendar data $(date -u +%F)"
+          git push
