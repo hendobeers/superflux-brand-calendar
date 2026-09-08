@@ -10,6 +10,8 @@ A single static page that renders the brand calendar from `calendar-data.js`. De
 - `scripts/links.mjs` — owns calendar-name → Brand Reference slug lookup.
 - `scripts/validate-links.mjs` — the gate the workflow runs before committing.
 - `beer-links.json` — the reviewed name → slug map. Edited by a person, never generated.
+- `scripts/og-card.html` — source for the link-preview image. Re-render after editing:
+  `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --window-size=1200,630 --screenshot=assets/og.png scripts/og-card.html`
 - `assets/` — Superflux badge. The Founders Grotesk `.woff2` files live here locally but are
   **git-ignored**: they are licensed and must not be redistributed in a public repo. They are
   served from a Vercel Blob store instead — see "Fonts" below.
