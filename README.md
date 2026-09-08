@@ -6,7 +6,29 @@ A single static page that renders the brand calendar from `calendar-data.js`. De
 
 - `index.html` — the page. No build step, no dependencies. Do not edit for content changes.
 - `calendar-data.js` — the only file the weekly task touches.
-- `assets/` — Founders Grotesk (Regular, Medium, Light Italic), Superflux badge.
+- `assets/` — Superflux badge. The Founders Grotesk `.woff2` files live here locally but are
+  **git-ignored**: they are licensed and must not be redistributed in a public repo. They are
+  served from a Vercel Blob store instead — see "Fonts" below.
+
+## Fonts
+
+Founders Grotesk is commercially licensed, so the font files are not in this repo. They are
+uploaded once to a public Vercel Blob store (`superflux-fonts`) and referenced by absolute URL
+from the `@font-face` rules in `index.html`:
+
+```
+https://tcreadmlo1botdmp.public.blob.vercel-storage.com/fonts/founders-grotesk-web-{regular,medium,light-italic}.woff2
+```
+
+They are already uploaded; nothing routine needs to touch them. To replace one:
+
+```bash
+vercel blob put assets/founders-grotesk-web-regular.woff2 \
+  --pathname fonts/founders-grotesk-web-regular.woff2 --access public
+```
+
+Keep local copies of the `.woff2` files in `assets/` for reference — a fresh `git clone` will not
+have them, and the page will fall back to Montserrat / system sans until they are re-uploaded.
 
 ## Deploy (Vercel)
 

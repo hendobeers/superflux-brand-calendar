@@ -2,3 +2,6 @@
 .vercel
 node_modules/
 .env*
+
+# Licensed fonts — hosted on Vercel Blob, never committed (see README)
+assets/*.woff2
