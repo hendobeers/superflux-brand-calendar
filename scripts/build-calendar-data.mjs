@@ -54,7 +54,7 @@ function categorise(name, type) {
   if (t.startsWith("lto")) return "lto";
   if (t.startsWith("feature")) return /burger/.test(n) ? "burger" : "food";
   if (t.includes("beer")) {
-    if (/collab/.test(n)) return "collab";
+    if (/collab|smoke em if you go em/.test(n)) return "collab";
     if (/creamery/.test(n)) return "creamery";
     if (/\bexp(\b|\.)|experimental/.test(n)) return "exp";
     if (t.includes("wholesale")) return "core";

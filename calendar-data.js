@@ -24,7 +24,7 @@ window.SFX_CALENDAR = {
     { "name": "Exp. #85 West Coast", "cat": "exp", "date": "2026-09-09" },
     { "name": "Exp. DIPA #1", "cat": "exp", "date": "2026-09-11" },
     { "name": "Evergreen", "cat": "core", "date": "2026-09-15" },
-    { "name": "Smoke Em If You Go Em' Smoked Lager", "cat": "release", "date": "2026-09-15" },
+    { "name": "Smoke Em If You Go Em' Smoked Lager", "cat": "collab", "date": "2026-09-15" },
     { "name": "Hayame Festbier (Godspeed Collab)", "cat": "collab", "date": "2026-09-18" },
     { "name": "Drip Tiramisu Coffee Stout", "cat": "release", "date": "2026-09-22" },
     { "name": "$1 Colour & Shape LTO", "cat": "lto", "start": "2026-09-27", "end": "2026-10-24" },
