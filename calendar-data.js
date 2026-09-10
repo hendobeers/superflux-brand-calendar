@@ -21,7 +21,7 @@ window.SFX_CALENDAR = {
     { "name": "$1 Easy Tiger LTO", "cat": "lto", "start": "2026-08-30", "end": "2026-09-26", "slug": "easy-tiger" },
     { "name": "The Creamery Banana Cream Pie", "cat": "creamery", "date": "2026-09-03" },
     { "name": "Key Lime Pie Heavy Fruit", "cat": "fruit", "start": "2026-09-05", "end": "2026-09-21" },
-    { "name": "Exp. #85 West Coast", "cat": "exp", "date": "2026-09-09" },
+    { "name": "Exp. #85 West Coast", "cat": "exp", "date": "2026-09-11" },
     { "name": "Exp. DIPA #1", "cat": "exp", "date": "2026-09-11" },
     { "name": "Evergreen", "cat": "core", "date": "2026-09-15", "slug": "evergreen" },
     { "name": "Smoke Em If You Go Em' Smoked Lager", "cat": "collab", "date": "2026-09-15", "slug": "superflux-x-willibald-smoke-lager" },
@@ -39,6 +39,6 @@ window.SFX_CALENDAR = {
     { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "premium-rice-lager" }
   ],
   recurring: [
-    { "name": "Burger Day", "cat": "burger", "weekdays": [0,6] }
+    { "name": "Burger Day", "cat": "burger", "weekdays": [6] }
   ]
 };
