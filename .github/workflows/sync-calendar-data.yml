@@ -1,7 +1,7 @@
 name: Sync calendar data
 on:
   schedule:
-    - cron: "30 9 * * 1"   # Mondays 09:30 UTC (~02:30 Vancouver)
+    - cron: "0 * * * *"   # Mondays 09:30 UTC (~02:30 Vancouver)
   workflow_dispatch:
   push:
     paths: ["scripts/*.mjs", "beer-links.json"]
