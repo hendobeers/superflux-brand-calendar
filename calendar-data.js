@@ -17,12 +17,13 @@ window.SFX_CALENDAR = {
     { "id": "burger", "label": "Food" }
   ],
   items: [
-    { "name": "Mixed Berry Waffle Whip Heavy Fruit", "cat": "fruit", "start": "2026-08-27", "end": "2026-09-05" },
+    { "name": "Mixed Berry Waffle Whip Heavy Fruit", "cat": "fruit", "start": "2026-08-27", "end": "2026-09-18" },
     { "name": "$1 Easy Tiger LTO", "cat": "lto", "start": "2026-08-30", "end": "2026-09-26", "slug": "easy-tiger" },
     { "name": "The Creamery Banana Cream Pie", "cat": "creamery", "date": "2026-09-03" },
-    { "name": "Key Lime Pie Heavy Fruit", "cat": "fruit", "start": "2026-09-05", "end": "2026-09-21" },
+    { "name": "Key Lime Pie Heavy Fruit", "cat": "fruit", "start": "2026-09-05", "end": "2026-10-02" },
     { "name": "Exp. #85 West Coast", "cat": "exp", "date": "2026-09-11" },
     { "name": "Exp. DIPA #1", "cat": "exp", "date": "2026-09-11" },
+    { "name": "Car Free Day @ Hero's Welcome", "cat": "event", "date": "2026-09-13" },
     { "name": "Evergreen", "cat": "core", "date": "2026-09-15", "slug": "evergreen" },
     { "name": "Smoke Em If You Go Em' Smoked Lager", "cat": "collab", "date": "2026-09-15", "slug": "superflux-x-willibald-smoke-lager" },
     { "name": "Hayame Festbier (Godspeed Collab)", "cat": "collab", "date": "2026-09-18", "slug": "hayame" },
@@ -36,7 +37,10 @@ window.SFX_CALENDAR = {
     { "name": "Exp. #86 NZ Fresh Hop", "cat": "exp", "date": "2026-10-15", "slug": "experimental-ipa-86" },
     { "name": "Brewchacho' Negra", "cat": "release", "date": "2026-10-21", "slug": "brewchacho-negra" },
     { "name": "$1 Happyness LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "happyness" },
-    { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "premium-rice-lager" }
+    { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "premium-rice-lager" },
+    { "name": "Petaluma", "cat": "release", "date": "2026-10-29" },
+    { "name": "Exp #87", "cat": "exp", "date": "2026-11-06" },
+    { "name": "Christmas IPA", "cat": "release", "date": "2026-11-17" }
   ],
   recurring: [
     { "name": "Burger Day", "cat": "burger", "weekdays": [6] }
