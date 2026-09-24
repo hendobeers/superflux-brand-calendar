@@ -39,9 +39,14 @@ window.SFX_CALENDAR = {
     { "name": "Brewchacho' Negra", "cat": "release", "date": "2026-10-21", "slug": "brewchacho-negra" },
     { "name": "$1 Happyness LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "happyness" },
     { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "premium-rice-lager" },
+    { "name": "Exp Dipa #3", "cat": "exp", "date": "2026-10-28" },
+    { "name": "Candyland", "cat": "release", "date": "2026-10-29" },
     { "name": "Petaluma", "cat": "release", "date": "2026-10-29" },
     { "name": "Exp #87", "cat": "exp", "date": "2026-11-06" },
-    { "name": "Christmas IPA", "cat": "release", "date": "2026-11-17" }
+    { "name": "Wills Collab", "cat": "collab", "date": "2026-11-12" },
+    { "name": "Christmas IPA", "cat": "release", "date": "2026-11-17" },
+    { "name": "The Creamery Strawberry Cheesecake", "cat": "creamery", "date": "2026-11-18" },
+    { "name": "Exp #88", "cat": "exp", "date": "2026-11-26" }
   ],
   recurring: [
     { "name": "Burger Day", "cat": "burger", "weekdays": [6] }
