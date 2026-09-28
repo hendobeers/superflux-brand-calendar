@@ -6,49 +6,12 @@ window.SFX_CALENDAR = {
     { "id": "2026-11", "label": "November 2026" }
   ],
   categories: [
-    { "id": "core", "label": "Standing Order" },
-    { "id": "exp", "label": "Experimental" },
-    { "id": "fruit", "label": "Heavy Fruit" },
-    { "id": "creamery", "label": "The Creamery" },
-    { "id": "collab", "label": "Collab" },
-    { "id": "release", "label": "New release" },
-    { "id": "lto", "label": "Wholesale $1 LTO" },
-    { "id": "event", "label": "Event" },
-    { "id": "burger", "label": "Food" }
+
   ],
   items: [
-    { "name": "Mango Pash Heavy Fruit", "cat": "fruit", "start": "2026-08-01", "end": "2026-09-25" },
-    { "name": "$1 Easy Tiger LTO", "cat": "lto", "start": "2026-08-30", "end": "2026-09-26", "slug": "easy-tiger" },
-    { "name": "The Creamery Banana Cream Pie", "cat": "creamery", "date": "2026-09-03" },
-    { "name": "Exp. #85 West Coast", "cat": "exp", "date": "2026-09-11" },
-    { "name": "Exp. DIPA #1", "cat": "exp", "date": "2026-09-11" },
-    { "name": "Car Free Day @ Hero's Welcome", "cat": "event", "date": "2026-09-13" },
-    { "name": "Evergreen", "cat": "core", "date": "2026-09-15", "slug": "evergreen" },
-    { "name": "Smoke Em If You Go Em' Smoked Lager", "cat": "collab", "date": "2026-09-15", "slug": "superflux-x-willibald-smoke-lager" },
-    { "name": "Hayame Festbier (Godspeed Collab)", "cat": "collab", "date": "2026-09-18", "slug": "hayame" },
-    { "name": "Drip Tiramisu Coffee Stout", "cat": "release", "date": "2026-09-22" },
-    { "name": "Mixed Berry Waffle Whip Heavy Fruit", "cat": "fruit", "start": "2026-09-25", "end": "2026-10-23" },
-    { "name": "$1 Colour & Shape LTO", "cat": "lto", "start": "2026-09-27", "end": "2026-10-24", "slug": "colour-and-shape" },
-    { "name": "Toroa", "cat": "core", "date": "2026-09-30", "slug": "toroa-ipa" },
-    { "name": "The Creamery Pumpkin Pie", "cat": "creamery", "date": "2026-10-02" },
-    { "name": "Oktoberfest", "cat": "event", "date": "2026-10-03" },
-    { "name": "Exp. DIPA #2", "cat": "exp", "date": "2026-10-08" },
-    { "name": "Dreamscape", "cat": "core", "date": "2026-10-13", "slug": "dreamscape-2026" },
-    { "name": "Exp. #86 NZ Fresh Hop", "cat": "exp", "date": "2026-10-15", "slug": "experimental-ipa-86" },
-    { "name": "Brewchacho' Negra", "cat": "release", "date": "2026-10-21", "slug": "brewchacho-negra" },
-    { "name": "Key Lime Pie Heavy Fruit", "cat": "fruit", "start": "2026-10-23", "end": "2026-11-20" },
-    { "name": "$1 Happyness LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "happyness" },
-    { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-10-25", "end": "2026-11-21", "slug": "premium-rice-lager" },
-    { "name": "Exp Dipa #3", "cat": "exp", "date": "2026-10-28" },
-    { "name": "Candyland", "cat": "release", "date": "2026-10-29" },
-    { "name": "Petaluma", "cat": "release", "date": "2026-10-29" },
-    { "name": "Exp #87", "cat": "exp", "date": "2026-11-06" },
-    { "name": "Wills Collab", "cat": "collab", "date": "2026-11-12" },
-    { "name": "Christmas IPA", "cat": "release", "date": "2026-11-17" },
-    { "name": "The Creamery Strawberry Cheesecake", "cat": "creamery", "date": "2026-11-18" },
-    { "name": "Exp #88", "cat": "exp", "date": "2026-11-26" }
+
   ],
   recurring: [
-    { "name": "Burger Day", "cat": "burger", "weekdays": [6] }
+
   ]
 };
