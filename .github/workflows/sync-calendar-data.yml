@@ -1,10 +1,13 @@
 name: Sync calendar data
 on:
   schedule:
-    - cron: "0 * * * *"   # Mondays 09:30 UTC (~02:30 Vancouver)
+    - cron: "0 * * * *"   # hourly — keeps the rolling three-month window current
   workflow_dispatch:
   push:
-    paths: ["scripts/*.mjs", "beer-links.json"]
+    paths: ["scripts/*.mjs", "beer-links.json", "data/events.csv"]
+concurrency:
+  group: sync-calendar-data
+  cancel-in-progress: false
 permissions:
   contents: write
 jobs:
@@ -12,9 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build calendar-data.js from the events sheet
-        env:
-          CALENDAR_SHEET_CSV_URL: ${{ vars.CALENDAR_SHEET_CSV_URL }}
+      - name: Build calendar-data.js from data/events.csv
         run: node scripts/build-calendar-data.mjs
       - name: Validate
         run: node scripts/validate-links.mjs
@@ -25,4 +26,5 @@ jobs:
           git add calendar-data.js
           git diff --cached --quiet && exit 0
           git commit -m "Update calendar data $(date -u +%F)"
+          git pull --rebase --quiet
           git push

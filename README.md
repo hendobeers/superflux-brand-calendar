@@ -6,7 +6,9 @@ A single static page that renders the brand calendar from `calendar-data.js`. De
 
 - `index.html` — the page. No build step, no dependencies. Do not edit for content changes.
 - `calendar-data.js` — the only file the weekly job rewrites. Generated; do not edit by hand.
-- `scripts/build-calendar-data.mjs` — builds `calendar-data.js` from the events sheet.
+- `data/events.csv` — the form responses, pushed from the sheet by the Apps Script. Do not edit by hand.
+- `apps-script/PushCalendarCsv.gs` — the script that lives in the responses sheet and pushes `data/events.csv`.
+- `scripts/build-calendar-data.mjs` — builds `calendar-data.js` from `data/events.csv`.
 - `scripts/links.mjs` — owns calendar-name → Brand Reference slug lookup.
 - `scripts/validate-links.mjs` — the gate the workflow runs before committing.
 - `beer-links.json` — the reviewed name → slug map. Edited by a person, never generated.
@@ -44,20 +46,33 @@ have them, and the page will fall back to Montserrat / system sans until they ar
 
 ## Weekly task contract
 
-`calendar-data.js` is **generated** — do not edit it by hand. `scripts/build-calendar-data.mjs`
-reads the published-to-web CSV of the events form-responses sheet and writes the file. The
-`sync-calendar-data` workflow runs it Mondays at 09:30 UTC (~02:30 Vancouver), on manual dispatch,
-and whenever the script itself changes; it commits `calendar-data.js` only when the contents differ,
-and the push redeploys the site.
+`calendar-data.js` is **generated** — do not edit it by hand. The data flows:
 
-The sheet URL lives in the repository variable `CALENDAR_SHEET_CSV_URL` (Settings -> Secrets and
-variables -> Actions -> Variables). No secrets are involved; the workflow uses `GITHUB_TOKEN` only.
+1. **Sheet → repo.** `apps-script/PushCalendarCsv.gs` runs inside the "Superflux Events Calendar
+   Submission (Responses)" sheet (Extensions -> Apps Script) on every form submission and hourly.
+   It writes the "Form Responses 1" tab to `data/events.csv` via the GitHub API, only when the
+   contents changed. It runs as the sheet owner inside the domain, so the sheet stays unpublished
+   and unshared — the shared drives block external sharing, which is why the old published-to-web
+   CSV stopped working.
+2. **Repo → site.** A push to `data/events.csv` triggers the `sync-calendar-data` workflow, which runs
+   `scripts/build-calendar-data.mjs` and commits `calendar-data.js` only when it differs; that push
+   redeploys the site. The workflow also runs hourly (to roll the three-month window forward) and on
+   manual dispatch.
+
+The Apps Script authenticates with a fine-grained GitHub token stored in the script's properties
+(`GITHUB_TOKEN`), scoped to this repo with "Contents: Read and write" and nothing else. When it
+expires, generate a new one and replace the property. Setup steps are at the top of the `.gs` file;
+if the sheet is ever moved or copied, the script goes with it, but triggers must be reinstalled by
+running `installTriggers()` once.
+
+If the build script can't read a valid responses CSV (wrong file, sign-in page, HTTP error) it exits
+non-zero and the workflow fails, leaving the last good calendar live rather than blanking it.
 
 To run it by hand:
 
 ```bash
 gh workflow run sync-calendar-data.yml          # via Actions
-CALENDAR_SHEET_CSV_URL="<url>" node scripts/build-calendar-data.mjs   # locally
+node scripts/build-calendar-data.mjs            # locally, from data/events.csv
 ```
 
 Which sheet column maps to which category is decided by `categorise()` in the script — that is the
