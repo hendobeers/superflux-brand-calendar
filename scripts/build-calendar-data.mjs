@@ -88,9 +88,25 @@ const lastM = new Date(now.getFullYear(), now.getMonth() + 3, 0);
 const winEnd = `${lastM.getFullYear()}-${pad(lastM.getMonth() + 1)}-${pad(lastM.getDate())}`;
 
 // ---------- read + build ----------
-const csv = SRC.startsWith("http") ? await (await fetch(SRC)).text() : await readFile(SRC, "utf8");
+async function readSource() {
+  if (!SRC.startsWith("http")) return readFile(SRC, "utf8");
+  const res = await fetch(SRC);
+  const text = await res.text();
+  // A moved/unpublished sheet answers with a 401/404 or a Google sign-in page — never overwrite the calendar with that.
+  if (!res.ok || /^\s*</.test(text)) {
+    console.error(`Sheet fetch failed (HTTP ${res.status}, ${res.headers.get("content-type")}). ` +
+      "Is the sheet still published to the web as CSV? Check CALENDAR_SHEET_CSV_URL.");
+    process.exit(1);
+  }
+  return text;
+}
+const csv = await readSource();
 const rows = parseCSV(csv).filter((r) => r.length >= 5 && r.some((c) => c.trim()));
-if (rows[0] && /timestamp/i.test(rows[0][0])) rows.shift();
+if (!rows[0] || !/timestamp/i.test(rows[0][0])) {
+  console.error(`Sheet doesn't look like the events form responses (first cell: ${JSON.stringify(rows[0]?.[0] ?? "")}).`);
+  process.exit(1);
+}
+rows.shift();
 
 const items = [], recurring = [], seen = new Set();
 for (const r of rows) {
