@@ -1,11 +1,11 @@
 // scripts/build-calendar-data.mjs
-// Reads the Superflux events form-responses sheet (published-to-web CSV) and writes calendar-data.js.
-// Usage: CALENDAR_SHEET_CSV_URL=<url or local path> node scripts/build-calendar-data.mjs
+// Reads the Superflux events form responses (data/events.csv, pushed by apps-script/PushCalendarCsv.gs)
+// and writes calendar-data.js.
+// Usage: node scripts/build-calendar-data.mjs   (CALENDAR_SHEET_CSV_URL=<url or path> overrides the source)
 import { readFile, writeFile } from "node:fs/promises";
 import { LINKABLE, SLUG_RE, canonKey, loadBeerLinks } from "./links.mjs";
 
-const SRC = process.env.CALENDAR_SHEET_CSV_URL;
-if (!SRC) { console.error("CALENDAR_SHEET_CSV_URL not set"); process.exit(1); }
+const SRC = process.env.CALENDAR_SHEET_CSV_URL || "data/events.csv";
 const OUT = process.env.CALENDAR_DATA_OUT || "calendar-data.js";
 const TZ = "America/Vancouver";
 
@@ -95,7 +95,7 @@ async function readSource() {
   // A moved/unpublished sheet answers with a 401/404 or a Google sign-in page — never overwrite the calendar with that.
   if (!res.ok || /^\s*</.test(text)) {
     console.error(`Sheet fetch failed (HTTP ${res.status}, ${res.headers.get("content-type")}). ` +
-      "Is the sheet still published to the web as CSV? Check CALENDAR_SHEET_CSV_URL.");
+      "Check CALENDAR_SHEET_CSV_URL.");
     process.exit(1);
   }
   return text;
