@@ -39,7 +39,7 @@ window.SFX_CALENDAR = {
     { "name": "Christmas IPA", "cat": "release", "date": "2026-11-17" },
     { "name": "The Creamery Strawberry Cheesecake", "cat": "creamery", "date": "2026-11-18" },
     { "name": "$1 Colour & Shape LTO", "cat": "lto", "start": "2026-11-22", "end": "2026-12-26", "slug": "colour-and-shape" },
-    { "name": "$1 Premium Rice Lager", "cat": "lto", "start": "2026-11-22", "end": "2026-12-26", "slug": "premium-rice-lager" },
+    { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-11-22", "end": "2026-12-26", "slug": "premium-rice-lager" },
     { "name": "Exp #88", "cat": "exp", "date": "2026-11-26" }
   ],
   recurring: [
