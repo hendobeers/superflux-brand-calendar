@@ -41,7 +41,7 @@ function pushCalendarCsv() {
       const body = JSON.parse(cur.getContentText());
       sha = body.sha;
       const existing = Utilities.newBlob(Utilities.base64Decode(body.content.replace(/\n/g, ''))).getDataAsString('UTF-8');
-      if (existing === csv) return;               // nothing changed — no commit, no redeploy
+      if (existing === csv) return heartbeat(headers); // nothing changed — no commit, no redeploy
     } else if (cur.getResponseCode() !== 404) {
       throw new Error(`GitHub read failed (${cur.getResponseCode()}): ${cur.getContentText()}`);
     }
@@ -62,8 +62,26 @@ function pushCalendarCsv() {
     if (res.getResponseCode() >= 300) {
       throw new Error(`GitHub write failed (${res.getResponseCode()}): ${res.getContentText()}`);
     }
+    heartbeat(headers);
   } finally {
     lock.releaseLock();
+  }
+}
+
+// Tells the repo the sheet and data/events.csv were confirmed in sync just now. The sync workflow
+// fails if it goes 6 hours without one of these (or a data/events.csv commit), so a dead trigger,
+// expired token or wrong sheet shows up as a red run instead of a calendar that quietly stops.
+// Needs only the token's existing "Contents: Read and write".
+function heartbeat(headers) {
+  const res = UrlFetchApp.fetch(`https://api.github.com/repos/${REPO}/dispatches`, {
+    method: 'post',
+    headers,
+    contentType: 'application/json',
+    muteHttpExceptions: true,
+    payload: JSON.stringify({ event_type: 'sheet-heartbeat' }),
+  });
+  if (res.getResponseCode() !== 204) {
+    throw new Error(`GitHub heartbeat failed (${res.getResponseCode()}): ${res.getContentText()}`);
   }
 }
 

@@ -68,6 +68,16 @@ running `installTriggers()` once.
 If the build script can't read a valid responses CSV (wrong file, sign-in page, HTTP error) it exits
 non-zero and the workflow fails, leaving the last good calendar live rather than blanking it.
 
+A green run means the data is current, not just that nothing changed. The workflow also fails when:
+
+- **the sheet push has gone quiet.** On every successful run the Apps Script sends a `sheet-heartbeat`
+  repository_dispatch, even when nothing changed. `scripts/check-freshness.mjs` fails the run if
+  neither a heartbeat nor a `data/events.csv` commit has arrived in 6 hours (`FRESHNESS_MAX_HOURS`).
+  If it's red: open the sheet's Apps Script project → Executions (errors) and Triggers (both
+  `pushCalendarCsv` triggers present), and check the `GITHUB_TOKEN` script property hasn't expired.
+- **a displayed month has no dated events.** The LTO runs alone should always cover all three months,
+  so an empty month means stale input. The build exits before writing `calendar-data.js`.
+
 To run it by hand:
 
 ```bash

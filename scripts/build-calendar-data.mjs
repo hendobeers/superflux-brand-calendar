@@ -136,6 +136,19 @@ for (const r of rows) {
 }
 items.sort((a, b) => (a.date || a.start).localeCompare(b.date || b.start) || a.name.localeCompare(b.name));
 
+// A displayed month with no dated items means the input stopped arriving, not a quiet month —
+// the LTO runs alone should always cover it. Recurring entries (Burger Day) don't count: they
+// render in every month whether or not the sheet is reaching the repo.
+const emptyMonths = months.filter(({ id }) => {
+  const mS = `${id}-01`, mE = `${id}-31`;
+  return !items.some((i) => (i.date ? i.date >= mS && i.date <= mE : i.start <= mE && i.end >= mS));
+});
+if (emptyMonths.length) {
+  console.error(`No events in ${emptyMonths.map((m) => m.label).join(", ")}. ` +
+    `${SRC} is probably stale: check the Apps Script push (apps-script/PushCalendarCsv.gs). Not writing ${OUT}.`);
+  process.exit(1);
+}
+
 // ---------- link items to the Brand Reference ----------
 // A slug is only ever read from the reviewed map. Nothing here derives one from a name:
 // the names and the slugs do not correspond, and a wrong link shows the wrong allergens.

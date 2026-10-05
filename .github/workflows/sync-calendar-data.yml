@@ -1,8 +1,10 @@
 name: Sync calendar data
 on:
   schedule:
-    - cron: "0 * * * *"   # hourly — keeps the rolling three-month window current
+    - cron: "0 * * * *"   # hourly — keeps the rolling three-month window current, and watches for a stalled sheet push
   workflow_dispatch:
+  repository_dispatch:
+    types: [sheet-heartbeat]   # sent by apps-script/PushCalendarCsv.gs on every successful run
   push:
     paths: ["scripts/*.mjs", "beer-links.json", "data/events.csv"]
 concurrency:
@@ -10,6 +12,7 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+  actions: read   # check-freshness reads past heartbeat runs
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -28,3 +31,10 @@ jobs:
           git commit -m "Update calendar data $(date -u +%F)"
           git pull --rebase --quiet
           git push
+      # Runs even when the build failed, so a stale input is named as the cause. "No change" above
+      # is only a success if the sheet has actually confirmed the input recently.
+      - name: Check the sheet push is alive
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/check-freshness.mjs
