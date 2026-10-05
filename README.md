@@ -11,6 +11,8 @@ A single static page that renders the brand calendar from `calendar-data.js`. De
 - `scripts/build-calendar-data.mjs` — builds `calendar-data.js` from `data/events.csv`.
 - `scripts/links.mjs` — owns calendar-name → Brand Reference slug lookup.
 - `scripts/validate-links.mjs` — the gate the workflow runs before committing.
+- `scripts/monday-check.mjs` — read-only weekly check run by Adam's Monday scheduled task: sync
+  freshness, empty months, and the week's diff. Prints which email to send; never sends anything itself.
 - `beer-links.json` — the reviewed name → slug map. Edited by a person, never generated.
 - `scripts/og-card.html` — source for the link-preview image. Re-render after editing:
   `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --window-size=1200,630 --screenshot=assets/og.png scripts/og-card.html`
