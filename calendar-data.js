@@ -42,7 +42,8 @@ window.SFX_CALENDAR = {
     { "name": "$1 Colour & Shape LTO", "cat": "lto", "start": "2026-11-22", "end": "2026-12-26", "slug": "colour-and-shape" },
     { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-11-22", "end": "2026-12-26", "slug": "premium-rice-lager" },
     { "name": "Exp #88", "cat": "exp", "date": "2026-11-26" },
-    { "name": "Marshmellow Fluff", "cat": "release", "date": "2026-12-02" }
+    { "name": "Marshmellow Fluff", "cat": "release", "date": "2026-12-02" },
+    { "name": "Dead Air IPA (Bellwoods Collab)", "cat": "collab", "date": "2026-12-24" }
   ],
   recurring: [
     { "name": "Burger Day", "cat": "burger", "weekdays": [6] }
