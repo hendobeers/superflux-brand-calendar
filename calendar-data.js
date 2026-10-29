@@ -41,7 +41,8 @@ window.SFX_CALENDAR = {
     { "name": "Exp DIPA#4", "cat": "exp", "date": "2026-11-19" },
     { "name": "$1 Colour & Shape LTO", "cat": "lto", "start": "2026-11-22", "end": "2026-12-26", "slug": "colour-and-shape" },
     { "name": "$1 Premium Rice Lager LTO", "cat": "lto", "start": "2026-11-22", "end": "2026-12-26", "slug": "premium-rice-lager" },
-    { "name": "Exp #88", "cat": "exp", "date": "2026-11-26" }
+    { "name": "Exp #88", "cat": "exp", "date": "2026-11-26" },
+    { "name": "Marshmellow Fluff", "cat": "release", "date": "2026-12-02" }
   ],
   recurring: [
     { "name": "Burger Day", "cat": "burger", "weekdays": [6] }
